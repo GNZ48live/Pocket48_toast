@@ -1,7 +1,6 @@
 # Pocket48_to_ass
 
-
-已知缺陷：
+####已知缺陷：
 1. 弹幕用户名与内容间存在阴影:
      - ASS字幕机理，有改动方案，但文件大小将成倍增加。暂不处理。
 2. 字符显示不全
@@ -16,3 +15,7 @@
 
 样例：     
 ![image](https://github.com/GNZ48live/Pocket48_to_ass/blob/master/Simple.jpg "蕾蕾镇楼")
+
+------------
+####Usage：
+> 
