@@ -21,5 +21,5 @@
 ------------
 #### Usage：
 ```
-python PtoA.py ***.lrc (lrc_name）
+python PtoA.py ***.lrc (Your lrc_name）
 ```
