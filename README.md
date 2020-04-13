@@ -1,4 +1,4 @@
-# Pocket48_to_ass
+# Pocket48_toast
 ----
 ###### 仿口袋直播特效的ASS字幕转换器
 ---
