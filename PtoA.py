@@ -1,6 +1,5 @@
 import os
 import re
-import codecs
 import textwrap
 import sys
 import argparse
