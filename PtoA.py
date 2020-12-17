@@ -44,6 +44,7 @@ def main():
     with open(args.lrc_file,encoding='utf-8') as fin:
         with open(f'{file_name}.ass','w',encoding='utf-8') as fout:
             i = 1
+            #Separate user name and the info
             for line in fin:
                 try:
                     line = re.split(r']|\t',line)
@@ -52,7 +53,7 @@ def main():
                     user.append(line[1])
                     info.append(' ' + line[2].replace('\n',''))
                     i += 1
-               except:
+                except:
                     error_logging = f'第{i}行 内容： {line} 错误'
                     print(error_logging)
                     i += 1
