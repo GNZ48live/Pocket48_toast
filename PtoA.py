@@ -13,7 +13,7 @@ info = []
 font_size = 20        #font_size = 20
 line_spacing = 38     #line_spacing = 38
 line_num = 6          #line_num = 6
-default_y_axis = 780  #default_y_axis = 790
+default_y_axis = 790  #default_y_axis = 790
 
 #ass字幕文件头及样式
 Def_info = f'''
