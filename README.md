@@ -23,3 +23,10 @@
 ```
 python PtoA.py ***.lrc (Your file）
 ```
+```
+新增可调参数
+font_size：字体大小
+line_spacing：行间距
+line_num：显示行数
+default_y_axis：整体弹幕高度（一般不需更改）
+```
