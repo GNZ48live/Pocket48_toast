@@ -1,7 +1,9 @@
 # Pocket48_toast
 ----
-###### 仿口袋直播特效的ASS字幕转换器
+###### 仿口袋直播特效的ASS字幕转换器及一个下载lrc的小工具
 ---
+这里有两个小工具，按说功能不同，该用新的仓库。
+按说可以整合到一个里面，但最终还是一懒毁一切。
 #### 已知缺陷：
 1. 弹幕用户名与内容间存在阴影:
      - ASS字幕机理，有改动方案，但文件大小将成倍增加。暂不处理。
@@ -19,7 +21,7 @@
 ![image](https://github.com/GNZ48live/Pocket48_to_ass/blob/master/Simple.jpg "蕾蕾镇楼")
 
 ------------
-#### Usage：
+#### Usage for PtoA：
 ```
 python PtoA.py ***.lrc (Your file）
 ```
@@ -30,3 +32,6 @@ line_spacing：行间距
 line_num：显示行数
 default_y_axis：整体弹幕高度（一般不需更改）
 ```
+#### Usage for lrc_down:
+按Read 按钮可以读取最新录播列表，按多一次翻下一页。
+点选希望下载的后，点下方Download按钮，将下载致同目录下，以liveid命名的lrc文件。
