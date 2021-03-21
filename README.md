@@ -33,5 +33,7 @@ line_num：显示行数
 default_y_axis：整体弹幕高度（一般不需更改）
 ```
 #### Usage for lrc_down:
+```
 按Read 按钮可以读取最新录播列表，按多一次翻下一页。
 点选希望下载的后，点下方Download按钮，将下载致同目录下，以liveid命名的lrc文件。
+```
