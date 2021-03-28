@@ -2,10 +2,12 @@ import tkinter as tk
 import requests
 import json
 import time
+import tkinter.messagebox
+import sys
 
 app = tk.Tk() 
 app.title('Pocket48_lrc')
-app.geometry('600x300')
+app.geometry('600x280')
 page_num = [0]
 liveid = []
 liveone_api = 'http://pocketapi.48.cn/live/api/v1/live/getLiveOne'
@@ -14,6 +16,8 @@ headers = {
     'User-Agent': 'PocketFans201807/6.0.22_201211 (Pixel 2 XL:Android 10;Google scorpion_taimen-userdebug 10 QQ3A.200705.002 eng.gmathe.20200722.185025 release-keys)',
     'Content-Type': 'application/json;charset=UTF-8'
 }
+
+
 def time_transfer(timestamp):
     time_ = time.localtime(int(timestamp)/1000)
     format_time = time.strftime("%Y-%m-%d %H:%M:%S",time_)
@@ -43,8 +47,8 @@ def fetch_data(page_num):
 
 def listbox_click(self):
     textbox.delete('1.0',tk.END)
-
-    textbox.insert(tk.INSERT, liveid[main_listbox.index('anchor')])
+    if main_listbox.index('anchor'):
+       textbox.insert(tk.INSERT, liveid[main_listbox.index('anchor')])
 
 def downloader():
     liveid_ = liveid[main_listbox.index('anchor')]
@@ -54,29 +58,35 @@ def downloader():
     lrc_url = live_info['content']['msgFilePath']
     m3u8_url = live_info['content']['playStreamPath']
     downloader = requests.get(lrc_url)
-    with open(f'{liveid_}.lrc','wb') as fin:
+    path_ = sys.path[0]
+    file_name = f'{path_}\\{liveid_}.lrc'
+    with open(file_name,'wb') as fin:
         fin.write(downloader.content)
-    textbox_url.delete('1.0',tk.END)
-    textbox_url.insert(tk.INSERT,m3u8_url)
+    textbox_url.delete(0,tk.END)
+    textbox_url.insert(0,m3u8_url)
 
-button_next = tk.Button(app,width=20,height=2,text='Read',command=lambda:fetch_data(page_num))
-main_listbox = tk.Listbox(width=75,height=10)
+button_next = tk.Button(app,width=16,height=1,text='Read',command=lambda:fetch_data(page_num))
 label = tk.Label(text='LiveID:')
-textbox = tk.Text(app,width=30,height=2)
+textbox = tk.Text(app,width=30,height=1)
+
+main_listbox = tk.Listbox(width=75,height=10)
 scrollbar = tk.Scrollbar(app,command=main_listbox.yview)
 main_listbox.configure(yscrollcommand=scrollbar.set)
-button_download = tk.Button(app,width=20,height=2,text='Download',command=lambda:downloader())
+
+button_download = tk.Button(app,width=16,height=1,text='Download',command=lambda:downloader())
 label_url = tk.Label(text='M3U8 Url:')
-textbox_url = tk.Text(app,width=30,height=2)
+textbox_url = tk.Entry(app,width=30)
 
 button_next.grid(row=0,column=2,columnspan=1,padx = 10,pady = 5,sticky = 'e')
 label.grid(row=0,column=0,columnspan=1)
 textbox.grid(row=0,column=1,columnspan=10,sticky = 'w')
+
 main_listbox.grid(row=1,column=0,columnspan=3,sticky = 'ns',padx = 10)
 scrollbar.grid(row=1,column=3,columnspan=1,sticky = 'ns')
-button_download.grid(row=2,column=2,sticky = 'e',pady = 5)
+
 label_url.grid(row=2,column=0,columnspan=1)
 textbox_url.grid(row=2,column=1,columnspan=10,sticky = 'w')
+button_download.grid(row=2,column=2,sticky = 'e',pady = 5)
 
 
 main_listbox.bind('<<ListboxSelect>>', listbox_click)
