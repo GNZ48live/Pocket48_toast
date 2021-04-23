@@ -14,9 +14,10 @@ class Application(Frame):
         self.createWidgets()
 
     def createWidgets(self):
+        self.var1 = tkinter.IntVar()
         self.label1 = Label(self,text='Lrc 文件：')
         self.nameInput1 = Entry(self,width=25)
-        self.alertButton1 = Button(self, text='打开', command=self.filepath_fetch)
+        self.openButton1 = Button(self, text='打开', command=self.filepath_fetch)
         self.label2 = Label(self,text='字体大小：')
         self.nameInput2 = Entry(self,width=5)
         self.label3 = Label(self,text='行间距：')
@@ -25,11 +26,12 @@ class Application(Frame):
         self.nameInput4 = Entry(self,width=5)
         self.label5 = Label(self,text='弹幕起始：')
         self.nameInput5 = Entry(self,width=5)
-        self.alertButton2 = Button(self, text='转换', command=self.to_ass,width=10)
+        self.transButton2 = Button(self, text='转换', command=self.to_ass,width=10)
+        self.checkbox = Checkbutton(self, text="是否显示聚聚名", variable=self.var1)
         
-        self.label1.grid(row=0,column=0,padx=3)
+        self.label1.grid(row=0,column=0,padx=3,pady=1)
         self.nameInput1.grid(row=0,column=1,padx=1)
-        self.alertButton1.grid(row=0,column=2,padx=3)
+        self.openButton1.grid(row=0,column=2,padx=3,pady=3)
         self.label2.grid(row=0,column=3)
         self.nameInput2.grid(row=0,column=4)
         self.label3.grid(row=1,column=3)
@@ -38,7 +40,8 @@ class Application(Frame):
         self.nameInput4.grid(row=2,column=4)
         self.label5.grid(row=3,column=3)
         self.nameInput5.grid(row=3,column=4)
-        self.alertButton2.grid(row=2,column=0)
+        self.transButton2.grid(row=2,column=0)
+        self.checkbox.grid(row=2,column=1)
 
         self.nameInput2.insert(0, 20)
         self.nameInput3.insert(0, 38)
@@ -65,24 +68,24 @@ class Application(Frame):
 
         y_axis_list = [default_y_axis-spacing*line_spacing for spacing in range(line_num)]
         Def_info = f'''
-        [Script Info]
-        Title: Default ASS file
-        ScriptType: v4.00+
-        WrapStyle: 2
-        Collisions: Normal
-        PlayResX: 384
-        PlayResY: 816
-        ScaledBorderAndShadow: yes
-        Video Zoom Percent: 1
+[Script Info]
+Title: Default ASS file
+ScriptType: v4.00+
+WrapStyle: 2
+Collisions: Normal
+PlayResX: 384
+PlayResY: 816
+ScaledBorderAndShadow: yes
+Video Zoom Percent: 1
 
-        [V4+ Styles]
-        Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-        Style: Default,微软雅黑,{font_size},&H00F0F0F0,&H00FFFFFF,&H4C533B3B,&H910E0807,0,0,0,0,100.0,100.0,0.0,0.0,3,6.1923075,2.5,1,20,275,27,1
-        Style: D2,微软雅黑,{font_size},&H00FFCF9C,&H00FFFFFF,&H4C533B3B,&H910E0807,0,0,0,0,100.0,100.0,0.0,0.0,3,6.1923075,2.5,1,74,275,27,1
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,微软雅黑,{font_size},&H00F0F0F0,&H00FFFFFF,&H4C533B3B,&H910E0807,0,0,0,0,100.0,100.0,0.0,0.0,3,6.1923075,2.5,1,20,275,27,1
+Style: D2,微软雅黑,{font_size},&H00FFCF9C,&H00FFFFFF,&H4C533B3B,&H910E0807,0,0,0,0,100.0,100.0,0.0,0.0,3,6.1923075,2.5,1,74,275,27,1
 
-        [Events]
-        Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-        '''
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+'''
         #Path input
         lrc_path = self.nameInput1.get()
         if not lrc_path:
@@ -123,8 +126,13 @@ class Application(Frame):
                         except:
                             pass
                         else:
-                            Dialogue = f'Dialogue: 4,{time_star},{time_end},Default,,0,0,0,,{{\pos(20,{y_axis})}}{{{t}D2}}{user_}:{{{t}}}{info_}'
-                            fout.write(Dialogue + '\n')           
+                            if self.var1.get() == 0:
+                                Dialogue = f'Dialogue: 4,{time_star},{time_end},Default,,0,0,0,,{{\pos(20,{y_axis})}}{info_}'
+                                fout.write(Dialogue + '\n')
+                            else:
+                                Dialogue = f'Dialogue: 4,{time_star},{time_end},Default,,0,0,0,,{{\pos(20,{y_axis})}}{{{t}D2}}{user_}:{{{t}}}{info_}'
+                                fout.write(Dialogue + '\n')
+
                     b += 1
         self.nameInput1.delete(0,'end')
         messagebox.showinfo('Completed', '转换成功')
