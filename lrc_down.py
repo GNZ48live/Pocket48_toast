@@ -9,7 +9,6 @@ app = tk.Tk()
 app.title('Pocket48_lrc')
 app.geometry('600x280')
 page_num = [0]
-liveid = []
 liveone_api = 'http://pocketapi.48.cn/live/api/v1/live/getLiveOne'
 api_url = 'http://pocketapi.48.cn/live/api/v1/live/getLiveList'
 headers = {
@@ -25,6 +24,8 @@ def time_transfer(timestamp):
 
 def fetch_data(page_num):
     lives_info = []
+    global liveid
+    liveid = []
     button_next['text'] = 'Next'
     post_value = {"debug":'true',"next":page_num[0],"record":'true'}
     wbdata = requests.post(api_url,data=json.dumps(post_value),headers=headers).text
@@ -47,7 +48,7 @@ def fetch_data(page_num):
 
 def listbox_click(self):
     textbox.delete('1.0',tk.END)
-    if main_listbox.index('anchor'):
+    if main_listbox.index('anchor') or main_listbox.index('anchor') == 0:
        textbox.insert(tk.INSERT, liveid[main_listbox.index('anchor')])
 
 def downloader():
