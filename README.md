@@ -23,7 +23,7 @@
    - 初学者，望斧正。
 
 样例：     
-![image](https://github.com/GNZ48live/Pocket48_to_ass/blob/master/Simple.jpg "蕾蕾镇楼")
+<img src="https://github.com/GNZ48live/Pocket48_to_ass/blob/master/Simple.jpg" width = "300" alt="刘媛镇楼" />
 
 ------------
 
