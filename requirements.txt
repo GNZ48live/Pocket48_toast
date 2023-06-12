@@ -1,3 +1,2 @@
-textwrap
-argparse
+requests
 ttkbootstrap
