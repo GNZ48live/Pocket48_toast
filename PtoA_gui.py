@@ -1,69 +1,164 @@
-#from tkinter import *
+from tkinter import *
 from ttkbootstrap import *
-import tkinter.messagebox as messagebox
-import tkinter.filedialog
+from tkinter.ttk import *
+from typing import Dict
+import requests
+import json
+import time
+import sys
+from tkinter import messagebox
+from tkinter import filedialog
 import os
 import re
-import textwrap
-import sys
 
+class WinGUI(Tk):
+    widget_dic: Dict[str, Widget] = {}
+    def __init__(self):
+        super().__init__()
+        self.__win()
+        self.widget_dic["tk_label_file_path"] = self.__tk_label_file_path(self)
+        self.widget_dic["tk_text_path"] = self.__tk_text_path(self)
+        self.widget_dic["tk_button_load"] = self.__tk_button_load(self)
+        self.widget_dic["tk_button_trans"] = self.__tk_button_trans(self)
+        self.widget_dic["tk_check_button_transs"] = self.__tk_check_button_transs(self)
+        self.widget_dic["tk_label_size"] = self.__tk_label_size(self)
+        self.widget_dic["tk_input_size"] = self.__tk_input_size(self)
+        self.widget_dic["tk_label_spacing"] = self.__tk_label_spacing(self)
+        self.widget_dic["tk_input_spacing"] = self.__tk_input_spacing(self)
+        self.widget_dic["tk_label_lines"] = self.__tk_label_lines(self)
+        self.widget_dic["tk_input_lines"] = self.__tk_input_lines(self)
+        self.widget_dic["tk_label_X"] = self.__tk_label_X(self)
+        self.widget_dic["tk_input_X"] = self.__tk_input_X(self)
+        self.widget_dic["tk_label_Y"] = self.__tk_label_Y(self)
+        self.widget_dic["tk_input_Y"] = self.__tk_input_Y(self)
 
-class Application(Frame):
-    def __init__(self, master=None):
-        Frame.__init__(self, master)
-        self.pack()
-        self.createWidgets()
+        self.widget_dic["tk_input_size"].insert(0, 20)
+        self.widget_dic["tk_input_spacing"].insert(0, 35)
+        self.widget_dic["tk_input_lines"].insert(0, 6)
+        self.widget_dic["tk_input_X"].insert(0, 20)
+        self.widget_dic["tk_input_Y"].insert(0, 800)
 
-    def createWidgets(self):
-        self.var1 = tkinter.IntVar()
-        self.label1 = Label(self,text='Lrc 文件：')
-        self.nameInput1 = Entry(self,width=25)
-        self.openButton1 = Button(self, text='打开', command=self.filepath_fetch)
-        self.label2 = Label(self,text='字体大小：')
-        self.nameInput2 = Entry(self,width=5)
-        self.label3 = Label(self,text='行间距：')
-        self.nameInput3 = Entry(self,width=5)
-        self.label4 = Label(self,text='显示行数：')
-        self.nameInput4 = Entry(self,width=5)
-        self.label5 = Label(self,text='弹幕起始：')
-        self.nameInput5 = Entry(self,width=5)
-        self.transButton2 = Button(self, text='转换', command=self.to_ass,width=10)
-        self.checkbox = Checkbutton(self, text="是否显示聚聚名", variable=self.var1)
+    def __win(self):
+        self.title("PtoA")
+        # 设置窗口大小、居中
+        width = 571
+        height = 205
+        screenwidth = self.winfo_screenwidth()
+        screenheight = self.winfo_screenheight()
+        geometry = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
+        self.geometry(geometry)
+        self.resizable(width=False, height=False)
+
+        # 自动隐藏滚动条
+    def scrollbar_autohide(self,bar,widget):
+        self.__scrollbar_hide(bar,widget)
+        widget.bind("<Enter>", lambda e: self.__scrollbar_show(bar,widget))
+        bar.bind("<Enter>", lambda e: self.__scrollbar_show(bar,widget))
+        widget.bind("<Leave>", lambda e: self.__scrollbar_hide(bar,widget))
+        bar.bind("<Leave>", lambda e: self.__scrollbar_hide(bar,widget))
+    
+    def __scrollbar_show(self,bar,widget):
+        bar.lift(widget)
+
+    def __scrollbar_hide(self,bar,widget):
+        bar.lower(widget)
         
-        self.label1.grid(row=0,column=0,padx=3,pady=1)
-        self.nameInput1.grid(row=0,column=1,padx=1)
-        self.openButton1.grid(row=0,column=2,padx=3,pady=3)
-        self.label2.grid(row=0,column=3)
-        self.nameInput2.grid(row=0,column=4)
-        self.label3.grid(row=1,column=3)
-        self.nameInput3.grid(row=1,column=4)
-        self.label4.grid(row=2,column=3)
-        self.nameInput4.grid(row=2,column=4)
-        self.label5.grid(row=3,column=3)
-        self.nameInput5.grid(row=3,column=4)
-        self.transButton2.grid(row=3,column=0)
-        self.checkbox.grid(row=3,column=1)
+    def __tk_label_file_path(self,parent):
+        label = Label(parent,text="文件：",anchor="center", )
+        label.place(x=30, y=30, width=50, height=30)
+        return label
 
-        self.nameInput2.insert(0, 20)
-        self.nameInput3.insert(0, 35)
-        self.nameInput4.insert(0, 6)
-        self.nameInput5.insert(0, 800)
+    def __tk_text_path(self,parent):
+        text = Text(parent)
+        text.place(x=90, y=30, width=369, height=30)
+        return text
 
-    def filepath_fetch(self):
-        self.nameInput1.delete(0,'end')
-        file_path = tkinter.filedialog.askopenfilename()
-        self.nameInput1.insert(0,file_path)
+    def __tk_button_load(self,parent):
+        btn = Button(parent, text="加载", takefocus=False,)
+        btn.place(x=479, y=27, width=73, height=33)
+        return btn
 
-    def to_ass(self):
+    def __tk_button_trans(self,parent):
+        btn = Button(parent, text="转换", takefocus=False,)
+        btn.place(x=480, y=150, width=73, height=33)
+        return btn
+
+    def __tk_check_button_transs(self,parent):
+        self.var = IntVar()
+        cb = Checkbutton(parent,text="显示用户名",variable=self.var,bootstyle="round-toggle")
+        cb.place(x=370, y=153, width=90, height=30)
+        return cb
+
+    def __tk_label_size(self,parent):
+        label = Label(parent,text="字体大小:",anchor="center", )
+        label.place(x=22, y=90, width=57, height=30)
+        return label
+
+    def __tk_input_size(self,parent):
+        ipt = Entry(parent, )
+        ipt.place(x=80, y=90, width=36, height=30)
+        return ipt
+
+    def __tk_label_spacing(self,parent):
+        label = Label(parent,text="行间距:",anchor="center", )
+        label.place(x=135, y=90, width=50, height=30)
+        return label
+
+    def __tk_input_spacing(self,parent):
+        ipt = Entry(parent, )
+        ipt.place(x=181, y=90, width=36, height=30)
+        return ipt
+
+    def __tk_label_lines(self,parent):
+        label = Label(parent,text="显示行数:",anchor="center", )
+        label.place(x=230, y=90, width=58, height=30)
+        return label
+
+    def __tk_input_lines(self,parent):
+        ipt = Entry(parent, )
+        ipt.place(x=290, y=90, width=36, height=30)
+        return ipt
+
+    def __tk_label_X(self,parent):
+        label = Label(parent,text="起始X轴:",anchor="center", )
+        label.place(x=340, y=90, width=50, height=30)
+        return label
+
+    def __tk_input_X(self,parent):
+        ipt = Entry(parent, )
+        ipt.place(x=390, y=90, width=36, height=30)
+        return ipt
+
+    def __tk_label_Y(self,parent):
+        label = Label(parent,text="起始Y轴:",anchor="center", )
+        label.place(x=440, y=90, width=50, height=30)
+        return label
+
+    def __tk_input_Y(self,parent):
+        ipt = Entry(parent, )
+        ipt.place(x=490, y=90, width=36, height=30)
+        return ipt
+
+class Win(WinGUI):
+    def __init__(self):
+        super().__init__()
+        self.__event_bind()
+
+    def time_transfer(self,timestamp):
+        time_ = time.localtime(int(timestamp)/1000)
+        format_time = time.strftime("%Y-%m-%d %H:%M:%S",time_)
+        return format_time
+
+    def to_ass(self,evt):
         timestamps = []
         user = []
         info = []
-        #Setting
         try:
-            font_size = int(self.nameInput2.get())        #font_size = 22
-            line_spacing = int(self.nameInput3.get())   #line_spacing = 35
-            line_num = int(self.nameInput4.get())        #line_num = 6
-            default_y_axis = int(self.nameInput5.get())  #default_y_axis = 800
+            font_size = int(self.widget_dic["tk_input_size"].get())        #font_size = 20
+            line_spacing = int(self.widget_dic["tk_input_spacing"].get())   #line_spacing = 35
+            line_num = int(self.widget_dic["tk_input_lines"].get())        #line_num = 6
+            default_y_axis = int(self.widget_dic["tk_input_Y"].get())  #default_y_axis = 800
+            x_axis = int(self.widget_dic["tk_input_X"].get())  #default_y_axis = 20
         except:
             return messagebox.showinfo('Caution!', '请确保参数正确')
 
@@ -88,32 +183,32 @@ Style: D2,微软雅黑,{font_size},&H00F6FCFF,&H00FFFFFF,&H88000000,&H910E0807,0
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 '''
         #Path input
-        lrc_path = self.nameInput1.get()
+        lrc_path = self.widget_dic["tk_text_path"].get(1.0,END)
         if not lrc_path:
             messagebox.showinfo('Remind', '请输入Lrc文件')
             return
         file_name = lrc_path.replace('.lrc','.ass')
-        if os.path.exists(file_name) == True:
-            if messagebox.askokcancel('Caution','文件已存在，是否覆盖') == False:
+        if os.path.isfile(file_name.strip()) == True:
+            if messagebox.askyesno('Caution','文件已存在，是否覆盖') == False:
                 return
-        with open(lrc_path,encoding='utf-8') as fin:
-            with open(f'{file_name}','w',encoding='utf-8') as fout:
+        with open(lrc_path.strip(),encoding='utf-8') as fin:
+            with open(file_name.strip(),'w',encoding='utf-8') as fout:
                 i = 1
                 #用户与信息分离
                 for line in fin:
                     try:
-                        if ']' in line:   
-                           line = re.split(r']|\t',line)
-                           line_time = line[0]
-                           timestamps.append(line_time[1:-1]) 
-                           user.append(line[1])
-                           info.append(' ' + line[2].replace('\n',''))
-                           i += 1
+                        if ']' in line:
+                            line = re.split(']|\t',line)
+                            line_time = line[0]
+                            timestamps.append(line_time[1:])
+                            user.append(line[1])
+                            info.append(' ' + line[2].replace('\n',''))
+                            i += 1
                     except:
-                        error_logging = f'第{i}行 内容： {line} 错误'
+                        #print(f'第{i}行 内容： {line} 错误')
                         i += 1
                         pass
-        #ASS Header Writing
+        #ASS Header                    
                 fout.write(Def_info)
        
                 t = '\\r'
@@ -128,21 +223,60 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
                         except:
                             pass
                         else:
-                            if self.var1.get() == 0:
-                                Dialogue = f'Dialogue: 4,{time_star},{time_end},Default,,0,0,0,,{{\pos(10,{y_axis})}}{info_}'
-                                fout.write(Dialogue + '\n')
+                            var = IntVar()
+                            if n != 1:                            
+                                if self.var.get() == 0:
+                                    Dialogue = f'Dialogue: 4,{time_star},{time_end},Default,,0,0,0,,{{\pos({x_axis},{y_axis})}}{info_}'
+                                    fout.write(Dialogue + '\n')
+                                else:
+                                    Dialogue = f'Dialogue: 4,{time_star},{time_end},Default,,0,0,0,,{{\pos({x_axis},{y_axis})}}{{{t}D2}}{user_}:{info_}'
+                                    fout.write(Dialogue + '\n')
                             else:
-                                Dialogue = f'Dialogue: 4,{time_star},{time_end},Default,,0,0,0,,{{\pos(10,{y_axis})}}{{{t}D2}}{user_}:{info_}'
+                                Dialogue = f'Dialogue: 4,{time_star},{time_end},Default,,0,0,0,,{{\pos({x_axis},{y_axis})}}{{\\fad(400,80)}}{info_}'
                                 fout.write(Dialogue + '\n')
 
                     b += 1
-        self.nameInput1.delete(0,'end')
+        self.widget_dic["tk_text_path"].delete(1.0,END)
         messagebox.showinfo('Completed', '转换成功')
 
-app = Application()
-# 设置窗口标题:
-app.master.title('Pocket48 lrc to ass')
-app.master.geometry('500x140')
-app.master.resizable(False,False)
-# 主消息循环:
-app.mainloop()
+    def time_adjust(self,evt):
+        if self.widget_dic["tk_text_path"].get(1.0,END):
+            lrc_path = self.widget_dic["tk_text_path"].get(1.0,END)
+        else:
+            messagebox.showinfo('Caution','请加载字幕文件')
+        file_name = lrc_path[0:-4] + '_adjuested' + '.lrc'
+        timestamp_n = []
+        if self.widget_dic["tk_input_second"].get():
+            second = int(self.widget_dic["tk_input_second"].get())
+        else:
+            messagebox.showinfo('Caution','请输入秒数')
+        with open(lrc_path.strip(),encoding='utf-8') as fin:
+            with open(file_name.strip(),'w',encoding='utf-8') as fout:
+                for line in fin:
+                    timestamp_tem = re.findall('\[([0-9]{0,2}\:[0-9]{0,2}\:[0-9]{0,2}\.[0-9]{0,3})\]',line)
+                    line = re.split(r']|\t',line)
+                    timestamp = timestamp_tem[0]
+                    second_n = int(timestamp[3:5]) * 60 + int(timestamp[6:8]) + second
+                    if second_n < 0:
+                        second_n = 0
+                    min_n = second_n // 60
+                    second_n = '{:02d}'.format(second_n % 60)
+                    timestamp = f'{timestamp[0:3]}{str(min_n)}:{str(second_n)}{timestamp[8:]}'
+                    line2 = line[2]
+                    new_line = f'[{timestamp}]{line[1]}\t{line2}'           
+                    fout.write(new_line)
+                messagebox.showinfo('Completed', '调整成功')
+
+    def filepath_fetch(self,evt):
+        self.widget_dic["tk_text_path"].delete(1.0,END)
+        file_path = filedialog.askopenfilename()
+        self.widget_dic["tk_text_path"].insert(1.0,file_path)
+
+    def __event_bind(self):
+        self.widget_dic["tk_button_load"].bind('<Button-1>',self.filepath_fetch)
+        self.widget_dic["tk_button_trans"].bind('<Button-1>',self.to_ass)
+        pass
+        
+if __name__ == "__main__":
+    win = Win()
+    win.mainloop()
