@@ -18,6 +18,8 @@
    - 审美差，欢迎提供配色方案。
 4. 代码写烂
    - 初学者，望斧正。
+5. 字幕有重叠的问题
+   - 暂时没找到成因，暂疑因弹幕过多时会出现。
 
 样例：     
 <img src="https://github.com/GNZ48live/Pocket48_to_ass/blob/master/Simple.jpg" width = "300" alt="刘媛镇楼" />
