@@ -2,14 +2,10 @@ from tkinter import *
 from ttkbootstrap import *
 from tkinter.ttk import *
 from typing import Dict
-import requests
-import json
-import time
-import sys
 from tkinter import messagebox
 from tkinter import filedialog
-import os
 import re
+from pathlib import Path
 
 class WinGUI(Tk):
     widget_dic: Dict[str, Widget] = {}
@@ -144,11 +140,6 @@ class Win(WinGUI):
         super().__init__()
         self.__event_bind()
 
-    def time_transfer(self,timestamp):
-        time_ = time.localtime(int(timestamp)/1000)
-        format_time = time.strftime("%Y-%m-%d %H:%M:%S",time_)
-        return format_time
-
     def to_ass(self,evt):
         timestamps = []
         user = []
@@ -188,7 +179,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             messagebox.showinfo('Remind', '请输入Lrc文件')
             return
         file_name = lrc_path.replace('.lrc','.ass')
-        if os.path.isfile(file_name.strip()) == True:
+        if Path(file_name.strip()).exists() == True:
             if messagebox.askyesno('Caution','文件已存在，是否覆盖') == False:
                 return
         with open(lrc_path.strip(),encoding='utf-8') as fin:
@@ -238,34 +229,6 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
                     b += 1
         self.widget_dic["tk_text_path"].delete(1.0,END)
         messagebox.showinfo('Completed', '转换成功')
-
-    def time_adjust(self,evt):
-        if self.widget_dic["tk_text_path"].get(1.0,END):
-            lrc_path = self.widget_dic["tk_text_path"].get(1.0,END)
-        else:
-            messagebox.showinfo('Caution','请加载字幕文件')
-        file_name = lrc_path[0:-4] + '_adjuested' + '.lrc'
-        timestamp_n = []
-        if self.widget_dic["tk_input_second"].get():
-            second = int(self.widget_dic["tk_input_second"].get())
-        else:
-            messagebox.showinfo('Caution','请输入秒数')
-        with open(lrc_path.strip(),encoding='utf-8') as fin:
-            with open(file_name.strip(),'w',encoding='utf-8') as fout:
-                for line in fin:
-                    timestamp_tem = re.findall('\[([0-9]{0,2}\:[0-9]{0,2}\:[0-9]{0,2}\.[0-9]{0,3})\]',line)
-                    line = re.split(r']|\t',line)
-                    timestamp = timestamp_tem[0]
-                    second_n = int(timestamp[3:5]) * 60 + int(timestamp[6:8]) + second
-                    if second_n < 0:
-                        second_n = 0
-                    min_n = second_n // 60
-                    second_n = '{:02d}'.format(second_n % 60)
-                    timestamp = f'{timestamp[0:3]}{str(min_n)}:{str(second_n)}{timestamp[8:]}'
-                    line2 = line[2]
-                    new_line = f'[{timestamp}]{line[1]}\t{line2}'           
-                    fout.write(new_line)
-                messagebox.showinfo('Completed', '调整成功')
 
     def filepath_fetch(self,evt):
         self.widget_dic["tk_text_path"].delete(1.0,END)
